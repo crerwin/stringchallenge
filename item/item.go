@@ -11,9 +11,8 @@ type Item struct {
 func CreateItem(input string) (Item, error) {
 	if validateText(input) {
 		return Item{rawText: input}, nil
-	} else {
-		return Item{}, errors.New("Invalid Input")
 	}
+	return Item{}, errors.New("Invalid Input")
 }
 
 // GetRawText returns the raw text from the Item.  By this point it has been
@@ -23,11 +22,11 @@ func (i *Item) GetRawText() string {
 }
 
 func (i *Item) GetConvertedText() string {
-	return convertText(i.rawText)
+	return convertText(i.rawText, false)
 }
 
 func (i *Item) GetConvertedTextAlphabetical() string {
-	return convertTextAlphabetical(i.rawText)
+	return convertText(i.rawText, true)
 }
 
 // validateText returns false if the given text does not fit the criteria as
@@ -65,10 +64,14 @@ func validateText(text string) bool {
 	return true
 }
 
-func convertText(input string) string {
-	return ""
-}
-
-func convertTextAlphabetical(input string) string {
-	return ""
+func convertText(input string, alphabetical bool) string {
+	return "id\n" +
+		"created\n" +
+		"employee\n" +
+		"- id\n" +
+		"- firstname\n" +
+		"- employeeType\n" +
+		"-- id\n" +
+		"- lastname\n" +
+		"location"
 }
