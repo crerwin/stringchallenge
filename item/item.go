@@ -1,15 +1,19 @@
 package item
 
-type item struct {
+// Item is our object for this exercise
+type Item struct {
 	rawText string
 }
 
-func createItem(input string) item {
+// CreateItem is a constructor.  Returns an Item loaded with your input
+func CreateItem(input string) Item {
 	validateText(input)
-	return item{rawText: input}
+	return Item{rawText: input}
 }
 
-func (i *item) GetRawText() string {
+// GetRawText returns the raw text from the Item.  By this point it has been
+// validated
+func (i *Item) GetRawText() string {
 	return i.rawText
 }
 
@@ -17,7 +21,7 @@ func (i *item) GetRawText() string {
 // follows: 1) the given string must start with an open paren and end with a
 // close paren, and the initial open paren must not be closed until the end (ie
 // all text must fall within the outer parens).  2) all subsequent parens must
-// be closed at some point.
+// be closed at some point, meaning our final depth should be exactly 0.
 func validateText(text string) bool {
 	depth := 0
 	length := len(text)
