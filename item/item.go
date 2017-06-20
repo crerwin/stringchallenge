@@ -1,14 +1,19 @@
 package item
 
+import "errors"
+
 // Item is our object for this exercise
 type Item struct {
 	rawText string
 }
 
 // CreateItem is a constructor.  Returns an Item loaded with your input
-func CreateItem(input string) Item {
-	validateText(input)
-	return Item{rawText: input}
+func CreateItem(input string) (Item, error) {
+	if validateText(input) {
+		return Item{rawText: input}, nil
+	} else {
+		return Item{}, errors.New("Invalid Input")
+	}
 }
 
 // GetRawText returns the raw text from the Item.  By this point it has been
@@ -50,4 +55,12 @@ func validateText(text string) bool {
 		return false
 	}
 	return true
+}
+
+func GetConvertedText() string {
+	return ""
+}
+
+func GetConvertedTextAlphabetical() string {
+	return ""
 }
