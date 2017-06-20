@@ -15,6 +15,10 @@ func TestValidateText(t *testing.T) {
 		{"(thing, thing2(thing3, thing4(thing5)))", true},
 		{"(thing, thing2(thing3, thing4(thing5))", false},
 		{"thing, thing2(thing3, thing4(thing5)))", false},
+		{"()()(())", false},
+		{"(()()(()))", true},
+		{"()()(()", false},
+		{")()(", false},
 	}
 	for _, c := range cases {
 		got := validateText(c.in)
