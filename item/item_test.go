@@ -27,3 +27,35 @@ func TestValidateText(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateItem(t *testing.T) {
+	cases := []struct {
+		in   string
+		want item
+	}{
+		{"(id,created,employee(id,firstname,employeeType(id), lastname),location)", item{rawText: "(id,created,employee(id,firstname,employeeType(id), lastname),location)"}},
+	}
+	for _, c := range cases {
+		got := createItem(c.in)
+		if got != c.want {
+			t.Errorf("createItem(%v) failed.  Got: %v, Expected: %v", c.in, got, c.want)
+		}
+	}
+}
+
+func TestGetRawText(t *testing.T) {
+	cases := []struct {
+		in   string
+		want string
+	}{
+		{"()", "()"},
+		{"(id,created,employee(id,firstname,employeeType(id), lastname),location)", "(id,created,employee(id,firstname,employeeType(id), lastname),location)"},
+	}
+	for _, c := range cases {
+		tempItem := createItem(c.in)
+		got := tempItem.GetRawText()
+		if got != c.want {
+			t.Errorf("GetRawText failed.  Got: %v, Wanted: %v", got, c.want)
+		}
+	}
+}
