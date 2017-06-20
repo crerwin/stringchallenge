@@ -22,6 +22,14 @@ func (i *Item) GetRawText() string {
 	return i.rawText
 }
 
+func (i *Item) GetConvertedText() string {
+	return convertText(i.rawText)
+}
+
+func (i *Item) GetConvertedTextAlphabetical() string {
+	return convertTextAlphabetical(i.rawText)
+}
+
 // validateText returns false if the given text does not fit the criteria as
 // follows: 1) the given string must start with an open paren and end with a
 // close paren, and the initial open paren must not be closed until the end (ie
@@ -57,10 +65,10 @@ func validateText(text string) bool {
 	return true
 }
 
-func GetConvertedText() string {
+func convertText(input string) string {
 	return ""
 }
 
-func GetConvertedTextAlphabetical() string {
+func convertTextAlphabetical(input string) string {
 	return ""
 }
