@@ -11,7 +11,7 @@ func TestCreateItem(t *testing.T) {
 	cases := []struct {
 		in string
 	}{
-		{"(id,created,employee(id,firstname,employeeType(id), lastname),location)"},
+		{"(id,created,employee(id,firstname,employeeType(id),lastname),location)"},
 	}
 	for _, c := range cases {
 		got, err := item.CreateItem(c.in)
@@ -29,7 +29,7 @@ func TestCreateItemInvalid(t *testing.T) {
 	cases := []struct {
 		in string
 	}{
-		{"(id,created,employee(id,firstname,employeeType(id), lastname,location)"},
+		{"(id,created,employee(id,firstname,employeeType(id),lastname,location)"},
 		{""},
 		{"()()"},
 		{"(()"},
@@ -49,7 +49,7 @@ func TestGetRawText(t *testing.T) {
 		want string
 	}{
 		{"()", "()"},
-		{"(id,created,employee(id,firstname,employeeType(id), lastname),location)", "(id,created,employee(id,firstname,employeeType(id), lastname),location)"},
+		{"(id,created,employee(id,firstname,employeeType(id),lastname),location)", "(id,created,employee(id,firstname,employeeType(id),lastname),location)"},
 	}
 	for _, c := range cases {
 		tempItem, _ := item.CreateItem(c.in)

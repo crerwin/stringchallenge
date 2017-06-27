@@ -2,7 +2,7 @@ package item
 
 import (
 	"errors"
-	"strings"
+	"fmt"
 
 	"github.com/crerwin/stringchallenge/chunk"
 )
@@ -30,28 +30,44 @@ func (i *Item) GetRawText() string {
 // extractAllChunks passes rawText to extractChunks and assigns the return slice
 // to chunks.  All the work is done in extractChunks.
 func (i *Item) extractAllChunks() {
-	i.chunks = extractChunks(i.rawText, 0)
+	i.chunks, _ = extractChunks(i.rawText, 0)
 }
 
 // extractChunks iterates through an input string and separates the chunks
 // (words).  If it hits a (, it calls itself, attaching what's
 // received back as the children of the last chunk in the list it's building.
-//  I know, I KNOW, recursion bad, but it works really well here.
-func extractChunks(input string, depth int) []chunk.Chunk {
-	start := 0               // tracks beginning of each chunk
+//  I know, I KNOW, recursion bad, but it works here.
+func extractChunks(input string, depth int) ([]chunk.Chunk, int) {
+	start := 1 // tracks beginning of each chunk
+	end := 1
 	var chunks []chunk.Chunk // temporary slice of chunks
-	for i, char := range input {
+	// Using this instead of a nice i, char in range loop because I need to move
+	// i under certain conditions.  We've already validated the text so we'll
+	// skip the first (
+	for i := 1; i < len(input); i++ {
+		fmt.Printf("input: %v depth: %v start: %v i: %v \n", input, depth, start, i)
+		char := input[i]
 		if char == ',' {
 			// if we hit a comma, add the word to chunks
 			chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
-			start = i
+			start = i + 1
 		} else if char == '(' && depth > 0 {
-			chunks[len(chunks)-1].AddChildren(extractChunks(input[i:], depth+1))
-		} else if char == ')' {
+			chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
+			tempchunks, newi := extractChunks(input[i:], depth+1)
+			i += newi
+			fmt.Println(len(chunks))
+			chunks[len(chunks)-1].AddChildren(tempchunks)
+			start = i
+			continue
+		} else if char == ')' && input[start] != ')' {
+			fmt.Printf("appending input[%v:%v] \n", start, i)
+			chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
+			end = i
 			break
 		}
 	}
-	return chunks
+	fmt.Printf("returning %v %v \n", chunks, end)
+	return chunks, end
 }
 
 func (i *Item) GetConvertedText() string {
@@ -76,7 +92,9 @@ func validateText(text string) bool {
 		return false
 	}
 	for i, char := range text {
-		if char == '(' {
+		if char == ' ' {
+			return false
+		} else if char == '(' {
 			depth++
 		} else if char == ')' {
 			depth--
@@ -98,12 +116,6 @@ func validateText(text string) bool {
 }
 
 func convertText(input string, alphabetical bool) string {
-	words := strings.FieldsFunc(input, func(r rune) bool {
-		switch r {
-		case ',', '(', ')':
-			return true
-		}
-		return false
-	})
-	return words[1]
+	finalstring := ""
+	return finalstring
 }
