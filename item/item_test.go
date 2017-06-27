@@ -59,3 +59,25 @@ func TestGetRawText(t *testing.T) {
 		}
 	}
 }
+
+func TestGetOutput(t *testing.T) {
+	cases := []struct {
+		in           string
+		alphabetical bool
+		want         string
+	}{
+		{"(test)", false, "\ntest"},
+		{"(test1,test2(test3),test4)", false, "\ntest1\ntest2\n- test3\ntest4"},
+		{"(test1,test2(test3),test4)", true, "\ntest1\ntest2\n- test3\ntest4"},
+		{"(ctest1,atest2(test3),btest4)", true, "\natest2\n- test3\nbtest4\nctest1"},
+		{"(test1,test2(test3(test4(test5,test6),test7),test8),test9,test10)", false, "\ntest1\ntest2\n- test3\n-- test4\n--- test5\n--- test6\n-- test7\n- test8\ntest9\ntest10"},
+		{"(dtest1,btest2(btest3(atest4(btest5,atest6),btest7),atest8),atest9,ctest10)", true, "\natest9\nbtest2\n- atest8\n- btest3\n-- atest4\n--- atest6\n--- btest5\n-- btest7\nctest10\ndtest1"},
+	}
+	for _, c := range cases {
+		tempItem, _ := item.CreateItem(c.in)
+		got := tempItem.GetOutput(c.alphabetical)
+		if got != c.want {
+			t.Errorf("createOutput failed.  In: %v, alphabetical: %v, Got: %v, Expected: %v", c.in, c.alphabetical, got, c.want)
+		}
+	}
+}

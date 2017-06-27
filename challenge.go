@@ -3,9 +3,22 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/crerwin/stringchallenge/item"
 )
 
 func main() {
 	args := os.Args[1:]
-	fmt.Println(args)
+	if len(args) != 1 {
+		fmt.Fprint(os.Stderr, "Use: stringchallenge (input(text,of),some,sort)\n")
+		os.Exit(1)
+	}
+	item, err := item.CreateItem(args[0])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+	}
+	fmt.Println("Non-alphabetized:")
+	fmt.Print(item.GetOutput(false))
+	fmt.Println("\n\nAlphabetized:")
+	fmt.Print(item.GetOutput(true))
 }

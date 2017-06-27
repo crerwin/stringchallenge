@@ -29,14 +29,9 @@ func (i *Item) GetRawText() string {
 	return i.rawText
 }
 
-// GetOutput returns the final output, not alphabetized.
-func (i *Item) GetOutput() string {
-	return createOutput(i.chunks, false)
-}
-
-// GetOutputAlphabetical returns the final output alphabetized.
-func (i *Item) GetOutputAlphabetical() string {
-	return createOutput(i.chunks, true)
+// GetOutput returns the final output.
+func (i *Item) GetOutput(alphabetical bool) string {
+	return createOutput(i.chunks, alphabetical)
 }
 
 // createOutput returns a string in the required format from a slice of chunks.
