@@ -18,7 +18,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 	}
 	fmt.Println("Non-alphabetized:")
-	fmt.Print(item.GetOutput(false))
-	fmt.Println("\n\nAlphabetized:")
-	fmt.Print(item.GetOutput(true))
+	fmt.Println(item.GetOutput(false))
+	fmt.Println("\nAlphabetized:")
+	fmt.Println(item.GetOutput(true))
 }
