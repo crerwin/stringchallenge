@@ -55,29 +55,22 @@ func TestExtractChunks(t *testing.T) {
 	}
 }
 
-// func TestConvertText(t *testing.T) {
+// func TestCreateOutput(t *testing.T) {
 // 	cases := []struct {
 // 		in           string
-// 		want         string
 // 		alphabetical bool
+// 		want         string
 // 	}{
-// 		{"(id,created,employee(id,firstname,employeeType(id), lastname),location)",
-// 			"id\ncreated\nemployee\n- id\n- firstname\n- employeeType\n-- id\n- lastname\nlocation",
-// 			false},
-// 		{"(one, one, one(two, two(three)), one(two(three)))",
-// 			"one\none\none\n- two\n- two\n-- three\none\n- two\n-- three",
-// 			false},
-// 		{"(id,created,employee(id,firstname,employeeType(id), lastname),location)",
-// 			"created\nemployee\n- employeeType\n-- id\n- firstname\n- id\n- lastname\nid\nlocation",
-// 			true},
-// 		{"(one, one, one(two, two(three)), one(two(three)))",
-// 			"one\none\none\n- two\n- two\n-- three\none\n- two\n-- three",
-// 			true},
+// 		{"(test)", false, "test"},
+// 		{"(test1,test2(test3),test4)", false, "test1\ntest2\n- test3\ntest4"},
+// 		{"(test1,test2(test3),test4)", true, "test1\ntest2\n- test3\ntest4"},
+// 		{"(ctest1,atest2(test3),btest4)", true, "atest2\n- test3\nbtest4\nctest1"},
 // 	}
 // 	for _, c := range cases {
-// 		got := convertText(c.in, c.alphabetical)
+// 		tempItem, _ := CreateItem(c.in)
+// 		got := tempItem.createOutput(c.alphabetical)
 // 		if got != c.want {
-// 			t.Errorf("convertText(%v) failed.  Got: %v, Expected: %v", c.in, got, c.want)
+// 			t.Errorf("createOutput failed.  In: %v, alphabetical: %v, Got: %v, Expected: %v", c.in, c.alphabetical, got, c.want)
 // 		}
 // 	}
 // }

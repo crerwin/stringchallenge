@@ -10,13 +10,15 @@ import (
 // Item is our object for this exercise
 type Item struct {
 	rawText string
-	chunks  []chunk.Chunk
+	chunks  chunk.Chunks
 }
 
 // CreateItem is a constructor.  Returns an Item loaded with your input
 func CreateItem(input string) (Item, error) {
 	if validateText(input) {
-		return Item{rawText: input}, nil
+		newItem := Item{rawText: input}
+		newItem.extractAllChunks()
+		return newItem, nil
 	}
 	return Item{}, errors.New("Invalid Input")
 }
@@ -25,6 +27,40 @@ func CreateItem(input string) (Item, error) {
 // validated
 func (i *Item) GetRawText() string {
 	return i.rawText
+}
+
+// GetOutput returns the final output, not alphabetized.
+func (i *Item) GetOutput() string {
+	return createOutput(i.chunks, 1, false)
+}
+
+// GetOutputAlphabetical returns the final output alphabetized.
+func (i *Item) GetOutputAlphabetical() string {
+	return createOutput(i.chunks, 1, true)
+}
+
+func (i *Item) fooOutput(alphabetical bool) string {
+	finalstring := ""
+	for j := range i.chunks {
+		finalstring += "\n"
+		if i.chunks[j].Depth > 1 {
+			k := 1
+			for k < i.chunks[j].Depth {
+				finalstring += "-"
+			}
+		}
+		finalstring += i.chunks[j].Value
+	}
+	return finalstring
+}
+
+func createOutput(chunks chunk.Chunks, depth int, alphabetical bool) string {
+	finalstring := ""
+	// for i := range chunks {
+	// 	finalstring += "\n"
+	// 	// if chunks[i]
+	// }
+	return finalstring
 }
 
 // extractAllChunks passes rawText to extractChunks and assigns the return slice
@@ -37,15 +73,15 @@ func (i *Item) extractAllChunks() {
 // (words).  If it hits a (, it calls itself, attaching what's
 // received back as the children of the last chunk in the list it's building.
 //  I know, I KNOW, recursion bad, but it works here.
-func extractChunks(input string, depth int) ([]chunk.Chunk, int) {
+func extractChunks(input string, depth int) (chunk.Chunks, int) {
 	start := 1 // tracks beginning of each chunk
 	end := 1
-	var chunks []chunk.Chunk // temporary slice of chunks
+	var chunks chunk.Chunks // temporary slice of chunks
 	// Using this instead of a nice i, char in range loop because I need to move
 	// i under certain conditions.  We've already validated the text so we'll
 	// skip the first (
 	for i := 1; i < len(input); i++ {
-		fmt.Printf("input: %v depth: %v start: %v i: %v \n", input, depth, start, i)
+		//fmt.Printf("input: %v depth: %v start: %v i: %v \n", input, depth, start, i)
 		char := input[i]
 		if char == ',' {
 			// if we hit a comma, add the word to chunks
@@ -60,22 +96,14 @@ func extractChunks(input string, depth int) ([]chunk.Chunk, int) {
 			start = i
 			continue
 		} else if char == ')' && input[start] != ')' {
-			fmt.Printf("appending input[%v:%v] \n", start, i)
+			//fmt.Printf("appending input[%v:%v] \n", start, i)
 			chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
 			end = i
 			break
 		}
 	}
-	fmt.Printf("returning %v %v \n", chunks, end)
+	//fmt.Printf("returning %v %v \n", chunks, end)
 	return chunks, end
-}
-
-func (i *Item) GetConvertedText() string {
-	return convertText(i.rawText, false)
-}
-
-func (i *Item) GetConvertedTextAlphabetical() string {
-	return convertText(i.rawText, true)
 }
 
 // validateText returns false if the given text does not fit the criteria as
@@ -113,9 +141,4 @@ func validateText(text string) bool {
 		return false
 	}
 	return true
-}
-
-func convertText(input string, alphabetical bool) string {
-	finalstring := ""
-	return finalstring
 }
