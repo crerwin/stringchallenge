@@ -2,7 +2,7 @@ package item
 
 import (
 	"errors"
-	"fmt"
+	"sort"
 
 	"github.com/crerwin/stringchallenge/chunk"
 )
@@ -31,35 +31,35 @@ func (i *Item) GetRawText() string {
 
 // GetOutput returns the final output, not alphabetized.
 func (i *Item) GetOutput() string {
-	return createOutput(i.chunks, 1, false)
+	return createOutput(i.chunks, false)
 }
 
 // GetOutputAlphabetical returns the final output alphabetized.
 func (i *Item) GetOutputAlphabetical() string {
-	return createOutput(i.chunks, 1, true)
+	return createOutput(i.chunks, true)
 }
 
-func (i *Item) fooOutput(alphabetical bool) string {
+// createOutput returns a string in the required format from a slice of chunks.
+// It recursively calls itself if a chunk has children, and the final output
+// bubbles up.
+func createOutput(chunks chunk.Chunks, alphabetical bool) string {
 	finalstring := ""
-	for j := range i.chunks {
-		finalstring += "\n"
-		if i.chunks[j].Depth > 1 {
-			k := 1
-			for k < i.chunks[j].Depth {
-				finalstring += "-"
-			}
-		}
-		finalstring += i.chunks[j].Value
+	if alphabetical {
+		sort.Sort(chunks)
 	}
-	return finalstring
-}
-
-func createOutput(chunks chunk.Chunks, depth int, alphabetical bool) string {
-	finalstring := ""
-	// for i := range chunks {
-	// 	finalstring += "\n"
-	// 	// if chunks[i]
-	// }
+	for i := range chunks {
+		finalstring += "\n"
+		for j := 0; j < chunks[i].Depth; j++ {
+			finalstring += "-"
+		}
+		if chunks[i].Depth > 0 {
+			finalstring += " "
+		}
+		finalstring += chunks[i].Value
+		if len(chunks[i].Children) > 0 {
+			finalstring += createOutput(chunks[i].Children, alphabetical)
+		}
+	}
 	return finalstring
 }
 
@@ -81,28 +81,26 @@ func extractChunks(input string, depth int) (chunk.Chunks, int) {
 	// i under certain conditions.  We've already validated the text so we'll
 	// skip the first (
 	for i := 1; i < len(input); i++ {
-		//fmt.Printf("input: %v depth: %v start: %v i: %v \n", input, depth, start, i)
 		char := input[i]
 		if char == ',' {
 			// if we hit a comma, add the word to chunks
-			chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
+			if input[start] != ')' {
+				chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
+			}
 			start = i + 1
-		} else if char == '(' && depth > 0 {
+		} else if char == '(' {
 			chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
 			tempchunks, newi := extractChunks(input[i:], depth+1)
 			i += newi
-			fmt.Println(len(chunks))
 			chunks[len(chunks)-1].AddChildren(tempchunks)
 			start = i
 			continue
 		} else if char == ')' && input[start] != ')' {
-			//fmt.Printf("appending input[%v:%v] \n", start, i)
 			chunks = append(chunks, chunk.CreateChunk(input[start:i], depth))
 			end = i
 			break
 		}
 	}
-	//fmt.Printf("returning %v %v \n", chunks, end)
 	return chunks, end
 }
 
